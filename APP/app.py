@@ -76,10 +76,11 @@ class Imagen(db.Model):
 
 
 
-
 with app.app_context():
     db.create_all()  
 
+# honestamente no tengo idea que es esto pero ayuda a jsonify-ar las bases de datos.
+# creo que usa marshmallow
 
 class RecetaSchema(ma.Schema):
     class Meta:
@@ -133,7 +134,7 @@ def get_images():
     imagenes_lista = [(i.directorio,i.directorio) for i in imagenes]
     return imagenes_lista
 
-# def get_ingredientes(id_receta):
+# def get_ingredientes(id_receta): ahora es un metodo de la clase Receta.
 #     lista_ingredientes = ListaIngredientes.query.filter_by(receta_id=id_receta).all()
 #     ingredientes = Ingrediente.query.all()
 #     for ingrediente in ingredientes:
@@ -181,7 +182,6 @@ def delete_receta(id):
     db.session.commit()
     return Receta_schema.jsonify(Receta)
 
-
 @app.route('/recetas', methods=['POST'])
 def create_receta():
     #print(request.json)  # request.json contiene el json que envio el cliente
@@ -193,7 +193,6 @@ def create_receta():
     db.session.add(new_Receta)
     db.session.commit()
     return Receta_schema.jsonify(new_Receta)
-
 
 @app.route('/recetas/<id>' ,methods=['PUT'])
 def update_receta(id):
