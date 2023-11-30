@@ -11,63 +11,33 @@ CORS(app)
 
 
 
-app.config['SQLALCHEMY_DATABASE_URI']='mysql+pymysql://root:root@localhost/db_brindis'
+app.config[ 'SQLALCHEMY_DATABASE_URI' ]='mysql+pymysql://root:root@localhost/db_brindis'
 # URI de la BBDD                          driver de la BD  user:clave@URLBBDD/nombreBBDD
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False #none
+app.config[ 'SQLALCHEMY_TRACK_MODIFICATIONS' ] = False #none
 db = SQLAlchemy(app)   
 ma = Marshmallow(app)   
 
 
 # tablas
-class Ingrediente(db.Model):
-    __tablename__ = "Ingrediente"
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(150))
-    # categoria_id = db.Column(db.Integer, ForeignKey("Categorias.id",
-                                                    #   ondelete="CASCADE"), nullable=False)
-    # id_receta
-
-class ListaIngredientes(db.Model):
-    __tablename__ = "ListaIngredientes"
-    id = db.Column(db.Integer, primary_key=True)
-    medida = db.Column(db.Integer, nullable=False)
-    unidad = db.Column(db.String(10), nullable=False)
-    ingrediente_id = db.Column(db.Integer, ForeignKey("Ingrediente.id",
-                                                      ondelete="CASCADE"), nullable=False)
-    receta_id = db.Column(db.Integer, ForeignKey("Receta.id", ondelete="CASCADE"),
-                          nullable=False)
-    # tiene_alcohol = db.Column(db.Boolean, nullable=False)
-
 class Receta(db.Model):   
     __tablename__ = "Receta"   
     id = db.Column(db.Integer, primary_key=True)   
     imagen = db.Column(db.String(500), nullable=False)
     nombre = db.Column(db.String(100), nullable=False)
-    #ingredientes =  por hacer. investigar como hacer una conexion con la
-    # tabla de lista de ingredientes donde la receta acceda a ingredientes
-    # pero no visceversa. deberemos poder añadir muchos ingredientes.
+    ingredientes = db.Column(db.String(1000), nullable=False)
     instrucciones = db.Column(db.String(1000), nullable=False)
     tiene_alcohol = db.Column(db.Boolean, nullable=False)
-    def __init__(self,nombre,imagen,instrucciones,tiene_alcohol):  
+    def __init__(self,nombre,imagen,instrucciones,ingredientes,tiene_alcohol):  
         self.nombre = nombre   
         self.imagen = imagen
         self.instrucciones = instrucciones
+        self.ingredientes = ingredientes
         self.tiene_alcohol = tiene_alcohol
     def get_ingredientes(self):
-        lista_ingredientes = ListaIngredientes.query.filter_by(receta_id=self.id).all()
-        ingredientes = Ingrediente.query.all()
-        for ingrediente in ingredientes:
-            for cosito in lista_ingredientes:
-                if cosito.ingrediente_id == ingrediente.id:
-                    cosito.ingrediente_id = ingrediente.nombre
-        formato = ListaIngredientes_schema.dump(lista_ingredientes)
-        return formato
-
-
-class Categoria(db.Model):
-    __tablename__ = "Categorias"
-    id = db.Column(db.Integer, primary_key=True)
-    nombre = db.Column(db.String(20), unique=True)
+        return jsonify(self.ingredientes.split("*"))
+    def get_instrucciones(self):
+        return jsonify(self.instrucciones.split("*"))
+    
 
 class Imagen(db.Model):
     __tablename__ = "Imagenes"
@@ -84,25 +54,20 @@ with app.app_context():
 
 class RecetaSchema(ma.Schema):
     class Meta:
-        fields=('id','nombre','imagen','instrucciones','tiene_alcohol')
+        fields=('id','nombre','imagen','instrucciones','ingredientes','tiene_alcohol')
 
 class ImagenSchema(ma.Schema):
     class Meta:
         fields=('id','directorio')
     
-class IngredientesSchema(ma.Schema):
-    class Meta:
-        fields=('id','medida', 'unidad', 'ingrediente_id', 'receta_id')
 
 
 
 
-Receta_schema=RecetaSchema()            
-Recetas_schema=RecetaSchema(many=True)
+receta_schema=RecetaSchema()            
+recetas_schema=RecetaSchema(many=True)
 Imagen_schema=ImagenSchema()            
 Imagenes_schema=ImagenSchema(many=True) 
-Ingredientes_schema=IngredientesSchema()            
-ListaIngredientes_schema=IngredientesSchema(many=True) 
 
 # funciones globales. necesarias para cosas que haremos luego
 
@@ -155,7 +120,7 @@ def get_images():
 @app.route('/recetas',methods=['GET'])
 def get_recetas():
     all_Recetas = Receta.query.all()
-    result = Recetas_schema.dump(all_Recetas)
+    result = recetas_schema.dump(all_Recetas)
     return jsonify(result)
 
 @app.route('/imagenes',methods=['GET'])
@@ -172,46 +137,53 @@ def display_ingredientes(id):
 
 @app.route('/recetas/<id>',methods=['GET'])
 def get_receta(id):
-    Receta=Receta.query.get(id)
-    return Receta_schema.jsonify(Receta)
+    receta=Receta.query.get(id)
+    return receta_schema.jsonify(receta)
+
+@app.route('/recetas/<id>/instrucciones',methods=['GET'])
+def get_instrucciones(id):
+    receta=Receta.query.get(id)
+    return receta.get_instrucciones()
 
 @app.route('/recetas/<id>',methods=['DELETE'])
 def delete_receta(id):
-    Receta=Receta.query.get(id)
-    db.session.delete(Receta)
+    receta=Receta.query.get(id)
+    db.session.delete(receta)
     db.session.commit()
-    return Receta_schema.jsonify(Receta)
+    return receta_schema.jsonify(receta)
 
 @app.route('/recetas', methods=['POST'])
 def create_receta():
-    #print(request.json)  # request.json contiene el json que envio el cliente
+    print(request.json)  # request.json contiene el json que envio el cliente
     nombre=request.json['nombre']
     tiene_alcohol=request.json['tiene_alcohol']
     imagen=request.json['imagen']
     instrucciones=request.json['instrucciones']
-    new_Receta=Receta(nombre,imagen,instrucciones,tiene_alcohol)
-    db.session.add(new_Receta)
+    ingredientes=request.json['ingredientes']
+    new_receta=Receta(nombre,imagen,instrucciones,ingredientes,tiene_alcohol)
+    db.session.add(new_receta)
     db.session.commit()
-    return Receta_schema.jsonify(new_Receta)
+    return receta_schema.jsonify(new_receta)
 
 @app.route('/recetas/<id>' ,methods=['PUT'])
 def update_receta(id):
-    Receta=Receta.query.get(id)
+    receta=Receta.query.get(id)
  
     nombre=request.json['nombre']
     instrucciones=request.json['instrucciones']
+    ingredientes=request.json['ingredientes']
     tiene_alcohol=request.json['tiene_alcohol']
     imagen=request.json['imagen']
 
-
-    Receta.nombre=nombre
-    Receta.instrucciones=instrucciones
-    Receta.tiene_alcohol=tiene_alcohol
-    Receta.imagen=imagen
+    receta.nombre=nombre
+    receta.instrucciones=instrucciones
+    receta.ingredientes=ingredientes
+    receta.tiene_alcohol=tiene_alcohol
+    receta.imagen=imagen
 
 
     db.session.commit()
-    return Receta_schema.jsonify(Receta)
+    return receta_schema.jsonify(receta)
  
 
 
