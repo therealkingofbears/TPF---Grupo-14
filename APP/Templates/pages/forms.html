@@ -4,50 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formularios</title>
-    <!--Usar una fuente externa de Google Fonts (https://fonts.google.com) -->
-    <link href="https://fonts.googleapis.com/css2?family=Caprasimo&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="..\APP\Static\css\style.css"> <!--se usa este formato para agregar una hoja de estilo; hay que modificar la ruta relativa-->
+    <link rel="stylesheet" href="../../Static/css/style.css"> <!--se usa este formato para agregar una hoja de estilo; hay que modificar la ruta relativa-->
 </head>
 <body>
-    <h1>Ingreso de Datos</h1>
-    <div id="ingrediente" class="section">
+    <h1>Ingreso de Recetas</h1>
+    <div id="receta_form" class="form-registro">
         <form action="/controlador-registro" method="POST" class="form-registro" id="form-registro"
             enctype="multipart/form-data">
             <div class="form-group">
-                <label for="Nombre">Nombre y Apellido</label>
-                <input type="text" class="input input-text" name="nombre" required placeholder="Juan Pérez" />
+                <label for="imagen">Imagen (Ruta)</label>
+                <input type="text" class="input input-text" name="imagen" required placeholder="APP\Static\img\bebidas-barra.jpg" />
             </div>
             <div class="form-group">
-                <label for="Mail">Email</label>
-                <input type="mail" class="input" name="mail" required placeholder="juanperez@diego.com" />
+                <label for="nombre">Nombre del cocktail</label>
+                <input type="text" class="input" name="nombre" required placeholder="Mai Tai" />
             </div>
             <div class="form-group">
-                <label for="Telefono">Teléfono</label>
-                <input type="number" class="input" name="telefono" required placeholder="1234567890" />
+                <label for="ingredientes">Teléfono</label>
+                <input type="text" class="input" name="ingredientes" required placeholder="1 parte de ron, 3 partes de cola, hielo" />
             </div>
             <div class="form-group">
-                <label for="pais">País</label>
-                <select name="pais" id="pais" class="input">
-                    <option value="arg">Argentina</option>
-                    <option value="bra">Brasil</option>
-                    <option value="chi">Chile</option>
-                    <option value="uru">Uruguay</option>
+                <label for="alcohol">Tiene alcohol?</label>
+                <select name="alcohol" id="alcohol" class="input">
+                    <option value="si">Si</option>
+                    <option value="no">No</option>
                 </select>
             </div>
             <div class="form-group">
-                <label for="Imagen">Imagen de Perfil</label>
-                <input type="file" class="input" name="imagen" />
-            </div>
-            <div class="form-group">
-                <label for="fecha">Fecha de Nacimiento</label>
-                <input type="date" name="fecha-nac" min="1900-01-01" max="2029-12-31" />
-            </div>
-            <div class="form-group">
-                <label for="contrasena" class="contrasena">Contraseña</label>
-                <input type="password" class="input" name="contrasena" pattern=",{8,}" placeholder="Ingrese al menos 8 dígitos" />
+                <label for="instrucciones">Instrucciones</label>
+                <input type="text" class="input" name="instrucciones" required placeholder="En una coctelera introducir hielo, ron y cola y mezclar. Servir en un vaso alto" />
             </div>
 
-            <button type="submit" class="link btn">Registrarme</button>
+            <button type="submit" class="link btn">Enviar</button>
             <button type="reset" class="link btn">Borrar Formulario</button>
         </form>
     </div>
