@@ -2,7 +2,7 @@ const inputIDRecetaABorrar = document.getElementById("inputIDRecetaABorrar")
 
 document.getElementById("deleteRecetaModal").addEventListener('show.bs.modal', evt => {
     const recetaId = evt.relatedTarget.getAttribute('data-bs-receta-id');
-    inputIDRFecetaABorrar.value = recetaId;
+    inputIDRecetaABorrar.value = recetaId;
 });
 
 const borrarReceta = async (evt) => {
@@ -12,7 +12,7 @@ const borrarReceta = async (evt) => {
         const opcionesFetch = {
             method: 'DELETE'
         }
-        const resp = await fetch(`${URL}/api/recetas/${id}`, opcionesFetch);
+        const resp = await fetch(`${URL}/recetas/${id}`, opcionesFetch);
         if (resp.ok) {
             alert("Receta borrada exitosamente");
             ocultarModal('deleteRecetaModal');
@@ -24,4 +24,5 @@ const borrarReceta = async (evt) => {
     } catch(err) {
         console.error(err);
     }
+    obtenerTodasLasRecetas();
 }
