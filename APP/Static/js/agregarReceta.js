@@ -7,6 +7,7 @@ const inputAlcohol = document.getElementById("inputAlcoholRecetaAdd");
 
 const agregarReceta = async (evt) => {
     evt.preventDefault();
+    console.log("Formulario enviado");
     try {
         const formData = new FormData();
         formData.append("imagen", inputImagen.files[0]);
@@ -41,8 +42,8 @@ const agregarReceta = async (evt) => {
         } else {
             // La respuesta no es en formato JSON
             throw new Error(`Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}`);
-        }// obtenerTodasLasRecetas();
-        // obtenerTodasLasRecetas();
+
+        }
     } catch (err) {
         console.error(err);
     }
