@@ -6,6 +6,7 @@ const inputAlcohol = document.getElementById("inputAlcoholRecetaAdd");
 
 const agregarReceta = async (evt) => {
     evt.preventDefault();
+    console.log("Formulario enviado");
     try {
         const formData = new FormData();
         formData.append("imagen", inputImagen.files[0]);
