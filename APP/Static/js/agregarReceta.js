@@ -37,7 +37,7 @@ const agregarReceta = async (evt) => {
                 obtenerTodasLasRecetas();
             }
             else {
-                throw new Error('Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}');
+                throw new Error(`Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}`);
             }
         } else {
             // La respuesta no es en formato JSON
