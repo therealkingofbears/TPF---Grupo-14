@@ -1,10 +1,10 @@
-const inputNombre = document.getElementById("inputNombreRecetaAdd");
-const inputImagen = document.getElementById("inputImagenRecetaAdd");
-const inputIngredientes = document.getElementById("inputIngredientesRecetaAdd");
-const inputInstrucciones = document.getElementById("inputInstruccionesRecetaAdd");
-const inputAlcohol = document.getElementById("inputAlcoholRecetaAdd");
+const inputNombre = document.getElementById("inputNombreRecetaPut");
+const inputImagen = document.getElementById("inputImagenRecetaPut");
+const inputIngredientes = document.getElementById("inputIngredientesRecetaPut");
+const inputInstrucciones = document.getElementById("inputInstruccionesRecetaPut");
+const inputAlcohol = document.getElementById("inputAlcoholRecetaPut");
 
-const agregarReceta = async (evt) => {
+const modificarReceta = async (evt) => {
     evt.preventDefault();
     try {
         const formData = new FormData();
@@ -14,22 +14,22 @@ const agregarReceta = async (evt) => {
         formData.append("instrucciones", inputInstrucciones.value);
         formData.append("alcohol", inputAlcohol.value);
         const opcionesFetch = {
-            method: 'POST',
+            method: 'PUT',
             body: formData
         }
         const resp = await fetch(`${URL}/recetas`, opcionesFetch);
         if (resp.ok) {
-            alert("Receta agregada exitosamente");
+            alert("Receta modificada exitosamente");
             inputImagen.value = "";
             inputNombre.value = "";
             inputIngredientes.value = "";
             inputInstrucciones.value = "";
             inputAlcohol.value = "";
-            ocultarModal('addRecetaModal');
+            ocultarModal('putRecetaModal');
             obtenerTodasLasRecetas();
         }
         else {
-            throw new Error('Error al agregar la receta.');
+            throw new Error('Error al editar la receta.');
         }
     } catch(err) {
         console.error(err);
