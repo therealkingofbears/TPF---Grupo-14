@@ -3,6 +3,7 @@ const inputImagen = document.getElementById("inputImagenRecetaAdd");
 const inputIngredientes = document.getElementById("inputIngredientesRecetaAdd");
 const inputInstrucciones = document.getElementById("inputInstruccionesRecetaAdd");
 const inputAlcohol = document.getElementById("inputAlcoholRecetaAdd");
+// const inputAlcohol = inputAlcoholText.value == "Si" ? true : false;
 
 const agregarReceta = async (evt) => {
     evt.preventDefault();
@@ -19,7 +20,6 @@ const agregarReceta = async (evt) => {
             body: formData
         }
         const resp = await fetch(`${URL}/recetas`, opcionesFetch);
-
         const contentType = resp.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
             // La respuesta es en formato JSON
@@ -37,7 +37,7 @@ const agregarReceta = async (evt) => {
                 obtenerTodasLasRecetas();
             }
             else {
-                throw new Error('Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}');
+                throw new Error(`Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}`);
             }
         } else {
             // La respuesta no es en formato JSON
@@ -47,5 +47,6 @@ const agregarReceta = async (evt) => {
     } catch (err) {
         console.error(err);
     }
+    obtenerTodasLasRecetas();
 }
 

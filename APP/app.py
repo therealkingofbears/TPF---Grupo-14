@@ -17,8 +17,8 @@ app.config[ 'SQLALCHEMY_DATABASE_URI' ]='mysql+pymysql://root:root@localhost/db_
 app.config[ 'SQLALCHEMY_TRACK_MODIFICATIONS' ] = False #none
 db = SQLAlchemy(app)   
 ma = Marshmallow(app)
-app.config['FOLDER_IMG'] = "/Static/img/"   
 CORS(app)
+app.config['FOLDER_IMG'] = "Static/img/"
 
 
 # tablas
@@ -31,7 +31,7 @@ class Receta(db.Model):
     nombre = db.Column(db.String(100), nullable=False)
     ingredientes = db.Column(db.String(1000), nullable=False)
     instrucciones = db.Column(db.String(1000), nullable=False)
-    tiene_alcohol = db.Column(db.Boolean, nullable=False)
+    tiene_alcohol = db.Column(db.String(2), nullable=False)
     def __init__(self,nombre,imagen,instrucciones,ingredientes,tiene_alcohol):  
         self.nombre = nombre   
         self.imagen = imagen
@@ -42,6 +42,8 @@ class Receta(db.Model):
         return jsonify(self.ingredientes.split("*"))
     def get_instrucciones(self):
         return jsonify(self.instrucciones.split("*"))
+    def get_imagen(self):
+        return (get_image(self.imagen)).get_directorio()
     
 
 class Imagen(db.Model):
@@ -50,14 +52,13 @@ class Imagen(db.Model):
     directorio = db.Column(db.String(500), unique=True)
     def __init__(self,imagen,nombre_cocktail,mantener_original):
         nombre_imagen = secure_filename(imagen.filename)
-        # original, extension = os.path.splitext(nombre_imagen)
-        # if mantener_original:
-        #     self.directorio = f"{nombre_imagen}"
-        # else:
-        #     self.directorio = f"cocktail_{nombre_cocktail}{extension}"
-        # nombre_imagen = self.directorio
+        original, extension = os.path.splitext(nombre_imagen)
+        if mantener_original:
+            self.directorio = f"{nombre_imagen}"
+        else:
+            self.directorio = f"cocktail_{nombre_cocktail}{extension}"
+        nombre_imagen = self.directorio
         imagen.save(os.path.join(app.config['FOLDER_IMG'], nombre_imagen))
-        # return jsonify(self)
     # def __init__(self,imagen):
     #     nombre_imagen = secure_filename(imagen.filename)
     #     imagen.save(os.path.join(app.config['FOLDER_IMG'], nombre_imagen))
@@ -158,6 +159,14 @@ def get_images():
 def get_recetas():
     all_Recetas = Receta.query.all()
     result = recetas_schema.dump(all_Recetas)
+    # result = jsonify(result)
+    print(result)
+    for receta in result:
+        receta['imagen'] = f"/app/{app.config['FOLDER_IMG']}{get_image(receta['imagen']).get_directorio()}"
+        print(receta['imagen'])
+        # for atributo in receta:
+        #     print(atributo)
+            # atributo.imagen = get_image(atributo.imagen).get_directorio()
     return jsonify(result)
 
 @app.route('/imagenes',methods=['GET'])
@@ -197,13 +206,13 @@ def create_receta():
     imagen=request.files['imagen']
     instrucciones=request.form['instrucciones']
     ingredientes=request.form['ingredientes']
-    # new_imagen=Imagen(imagen,nombre,False)
-    # db.session.add(new_imagen)
-    # db.session.commit()
-    nombre_imagen = secure_filename(imagen.filename)
-    imagen.save(os.path.join(app.config['FOLDER_IMG'], nombre_imagen))
     new_receta=Receta(nombre,1,instrucciones,ingredientes,tiene_alcohol)
     db.session.add(new_receta)
+    db.session.commit()
+    new_imagen=Imagen(imagen,new_receta.id,False)
+    db.session.add(new_imagen)
+    db.session.commit()
+    new_receta.imagen = new_imagen.id
     db.session.commit()
     return receta_schema.jsonify(new_receta)
 
@@ -216,8 +225,8 @@ def update_receta(id):
     ingredientes=request.form['ingredientes']
     tiene_alcohol=request.form['alcohol']
     imagen=request.file['imagen']
-    delete_image(receta.imagen)
     new_imagen=Imagen(imagen,nombre,False)
+    delete_image(receta.imagen)
     receta.nombre=nombre
     receta.instrucciones=instrucciones
     receta.ingredientes=ingredientes
