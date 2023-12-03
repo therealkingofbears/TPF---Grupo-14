@@ -19,20 +19,32 @@ const agregarReceta = async (evt) => {
             body: formData
         }
         const resp = await fetch(`${URL}/recetas`, opcionesFetch);
-        if (resp.ok) {
-            alert("Receta agregada exitosamente");
-            inputImagen.value = "";
-            inputNombre.value = "";
-            inputIngredientes.value = "";
-            inputInstrucciones.value = "";
-            inputAlcohol.value = "";
-            ocultarModal('addRecetaModal');
-            obtenerTodasLasRecetas();
+
+        const contentType = resp.headers.get("content-type");
+        if (contentType && contentType.includes("application/json")) {
+            // La respuesta es en formato JSON
+            const jsonResponse = await resp.json();
+            console.log("Respuesta del servidor (JSON):", jsonResponse);
+
+            if (resp.ok) {
+                alert("Receta agregada exitosamente");
+                inputImagen.value = "";
+                inputNombre.value = "";
+                inputIngredientes.value = "";
+                inputInstrucciones.value = "";
+                inputAlcohol.value = "";
+                ocultarModal('addRecetaModal');
+                obtenerTodasLasRecetas();
+            }
+            else {
+                throw new Error('Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}');
+            }
+        } else {
+            // La respuesta no es en formato JSON
+            throw new Error(`Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}`);
+
         }
-        else {
-            throw new Error('Error al agregar la receta.');
-        }
-    } catch(err) {
+    } catch (err) {
         console.error(err);
     }
 }
