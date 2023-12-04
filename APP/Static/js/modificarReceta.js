@@ -1,38 +1,41 @@
-const inputNombre = document.getElementById("inputNombreRecetaPut");
-const inputImagen = document.getElementById("inputImagenRecetaPut");
-const inputIngredientes = document.getElementById("inputIngredientesRecetaPut");
-const inputInstrucciones = document.getElementById("inputInstruccionesRecetaPut");
-const inputAlcohol = document.getElementById("inputAlcoholRecetaPut");
-const inputIDReceta = document.getElementById("inputIDRecetaAEditar");
+const inputNombreRecetaPut = document.getElementById("inputNombreRecetaPut");
+const inputImagenRecetaPut = document.getElementById("inputImagenRecetaPut");
+const inputIngredientesRecetaPut = document.getElementById("inputIngredientesRecetaPut");
+const inputInstruccionesRecetaPut = document.getElementById("inputInstruccionesRecetaPut");
+const inputAlcoholRecetaPut = document.getElementById("inputAlcoholRecetaPut");
+const inputIDRecetaAEditar = document.getElementById("inputIDRecetaAEditar");
 
 document.getElementById("editRecetaModal").addEventListener('show.bs.modal', evt => {
     const recetaId = evt.relatedTarget.getAttribute('data-bs-receta-id');
-    inputIDReceta.value = recetaId;
+    inputIDRecetaAEditar.value = recetaId;
 });
 
 const modificarReceta = async (evt) => {
     evt.preventDefault();
     try {
         const formData = new FormData();
-        const id = inputIDReceta.value;
+        const id = inputIDRecetaAEditar.value;
         // formData.append("id", inputIDReceta.value);
-        formData.append("imagen", inputImagen.files[0]);
-        formData.append("nombre", inputNombre.value);
-        formData.append("ingredientes", inputIngredientes.value);
-        formData.append("instrucciones", inputInstrucciones.value);
-        formData.append("alcohol", inputAlcohol.value);
+        formData.append("imagen", inputImagenRecetaPut.files[0]);
+        formData.append("nombre", inputNombreRecetaPut.value);
+        formData.append("ingredientes", inputIngredientesRecetaPut.value);
+        formData.append("instrucciones", inputInstruccionesRecetaPut.value);
+        formData.append("alcohol", inputAlcoholRecetaPut.value);
         const opcionesFetch = {
             method: 'PUT',
             body: formData
         }
+        console.log("Intentando modificar");
         const resp = await fetch(`${URL}/recetas/${id}`, opcionesFetch);
+        console.log("Aún intentando modificar");
         if (resp.ok) {
             alert("Receta modificada exitosamente");
-            inputImagen.value = "";
-            inputNombre.value = "";
-            inputIngredientes.value = "";
-            inputInstrucciones.value = "";
-            inputAlcohol.value = "";
+            inputIDRecetaAEditar.value = "";
+            inputImagenRecetaPut.value = "";
+            inputNombreRecetaPut.value = "";
+            inputIngredientesRecetaPut.value = "";
+            inputInstruccionesRecetaPut.value = "";
+            inputAlcoholRecetaPut.value = "";
             ocultarModal('editRecetaModal');
             obtenerTodasLasRecetas();
         }
@@ -42,16 +45,4 @@ const modificarReceta = async (evt) => {
     } catch(err) {
         console.error(err);
     }
-}
-
-const recetaNombre = recetaData => {
-    return `<input type="text" class="input" name="nombre" id="inputNombreRecetaPut" required placeholder=">${recetaData.nombre}" />`
-}
-
-const recetaIngredientes = recetaData => {
-    return `${recetaData.ingredientes}`
-}
-
-const recetaInstrucciones = recetaData => {
-    return `${recetaData.instrucciones}`
 }
