@@ -130,8 +130,8 @@ table.table .avatar {
 
 
 body {
-	color: #566787;
-	background: #f5f5f5;
+	color: #c0c0db;
+	background: #8e8ea5;
 	font-family: 'Varela Round', sans-serif;
 }
 
@@ -144,6 +144,44 @@ body {
 .logo-img {
     height: 10vw;
     width: auto;
+}
+
+.table-title {
+	background-color: #c0c0db;
+	color: #6e6e86;
+}
+
+.table-responsive {
+	border-radius: 0.5vw;
+}
+
+footer {
+	padding: 2vw;
+	margin-bottom: 2vw;
+	background-color: #c0c0db;
+	color: #6e6e86;
+	border-radius: 0.5vw;
+}
+
+#tablaDeRecetas {
+	color: #6e6e86;
+}
+
+.modal-header{
+	color: #c0c0db;
+	background: #8e8ea5;
+    padding: 14px 25px !important;
+    text-align: center !important;
+    display: inline-block !important;
+}
+
+.modal-body,.modal-footer {
+	background: #c0c0db;
+	color: #6e6e86;
+}
+
+.table-wrapper-custom {
+	background: #8e8ea5 !important;
 }
 
 /* Modal styles */

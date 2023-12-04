@@ -22,7 +22,7 @@ const obtenerTodasLasRecetas = async (evt) => {
 
 const nuevaFila = recetaData => {
     return `
-    <td><img src="${recetaData.imagen}" alt="Imagen de ${recetaData.nombre}" height="100vw" width="auto"></td>
+    <td><img src="/app/Static/img/${recetaData.imagen}" alt="Imagen de ${recetaData.nombre}" height="100vw" width="auto"></td>
     <td>${recetaData.nombre}</td>
     <td>${recetaData.ingredientes}</td>
     <td>${recetaData.instrucciones}</td>

@@ -17,8 +17,8 @@ app.config[ 'SQLALCHEMY_DATABASE_URI' ]='mysql+pymysql://root:root@localhost/db_
 app.config[ 'SQLALCHEMY_TRACK_MODIFICATIONS' ] = False #none
 db = SQLAlchemy(app)   
 ma = Marshmallow(app)
-CORS(app)
 app.config['FOLDER_IMG'] = "Static/img/"
+CORS(app)
 
 
 # tablas
@@ -26,7 +26,7 @@ class Receta(db.Model):
     __tablename__ = "Receta"   
     id = db.Column(db.Integer, primary_key=True)   
     # imagen = db.Column(ForeignKey())
-    imagen = db.Column(db.Integer, nullable=False) 
+    imagen = db.Column(db.String(100), nullable=False) 
     nombre = db.Column(db.String(100), nullable=False)
     ingredientes = db.Column(db.String(1000), nullable=False)
     instrucciones = db.Column(db.String(1000), nullable=False)
@@ -42,26 +42,7 @@ class Receta(db.Model):
     def get_instrucciones(self):
         return jsonify(self.instrucciones.split("*"))
     def get_imagen(self):
-        return (get_image(self.imagen)).get_directorio()
-    
-
-class Imagen(db.Model):
-    __tablename__ = "Imagenes"
-    id = db.Column(db.Integer, primary_key=True)
-    directorio = db.Column(db.String(500), unique=True)
-    def __init__(self,imagen,nombre_cocktail,mantener_original):
-        nombre_imagen = secure_filename(imagen.filename)
-        original, extension = os.path.splitext(nombre_imagen)
-        if mantener_original:
-            self.directorio = f"{nombre_imagen}"
-        else:
-            self.directorio = f"cocktail_{nombre_cocktail}{extension}"
-        nombre_imagen = self.directorio
-        imagen.save(os.path.join(app.config['FOLDER_IMG'], nombre_imagen))
-    def get_directorio(self):
-        return self.directorio
-    def get_id(self):
-        return f"{self.id}"
+        return self.imagen
 
         
 
@@ -77,9 +58,6 @@ class RecetaSchema(ma.Schema):
     class Meta:
         fields=('id','nombre','imagen','instrucciones','ingredientes','tiene_alcohol')
 
-class ImagenSchema(ma.Schema):
-    class Meta:
-        fields=('id','directorio')
     
 
 
@@ -87,40 +65,9 @@ class ImagenSchema(ma.Schema):
 
 receta_schema=RecetaSchema()            
 recetas_schema=RecetaSchema(many=True)
-Imagen_schema=ImagenSchema()            
-Imagenes_schema=ImagenSchema(many=True) 
 
 # funciones globales. necesarias para cosas que haremos luego
 
-def update_imagenes(): # obtiene TODAS las imagenes que esten en el directorio static/img.
-                 # siempre que se llama, chequea si hay nuevas imagenes y las añade a la DB.
-                 # si una imagen fue borrada y sigue en la DB, la elimina.
-    imagenes = Imagen.query.all()
-    lista = []
-    lista2 = []
-    for imagen in imagenes:
-        lista.append(imagen.directorio)
-    for archivo in os.listdir("static/img"):
-        lista2.append(archivo)
-        if archivo not in lista:
-            print(archivo)
-            nombre = ""
-            nueva = Imagen(archivo,nombre,True)
-            db.session.add(nueva)
-            db.session.commit()
-    for imagen in lista: # itera sobre la lista en memoria que contiene los directorios
-                         # de la tabla de imágenes.
-        if imagen not in lista2: # si la imagen NO existe en la lista2, que es la lista con
-                                 # los archivos actuales, eliminarla de la base de datos.
-            imagen = Imagen.query.filter_by(directorio=str(imagen)).one()
-            db.session.delete(imagen)
-            db.session.commit()
-
-def delete_image(id):
-    imagen = Imagen.query.filter_by(id=id).one()
-    if imagen:
-        db.session.delete(imagen)
-        db.session.commit()
 
 def delete_image_file(nombre):
     for archivo in os.scandir("./Static/img"):
@@ -129,30 +76,16 @@ def delete_image_file(nombre):
             return True
     return False
             
-def get_image(id):
-    return Imagen.query.filter_by(id=id).one()
-
-def get_images():
-    imagenes = Imagen.query.all()
-    imagenes_lista = [(i.directorio,i.directorio) for i in imagenes]
-    return imagenes_lista
-
-# def get_ingredientes(id_receta): ahora es un metodo de la clase Receta.
-#     lista_ingredientes = ListaIngredientes.query.filter_by(receta_id=id_receta).all()
-#     ingredientes = Ingrediente.query.all()
-#     for ingrediente in ingredientes:
-#         for cosito in lista_ingredientes:
-#             if cosito.ingrediente_id == ingrediente.id:
-#                 cosito.ingrediente_id = ingrediente.nombre
-#     formato = ListaIngredientes_schema.dump(lista_ingredientes)
-    
-#     return jsonify(formato)
-
-
-# def getCategorias(): es posible que esta no sea necesaria.
-#     categorias = Categoria.query.all()
-#     categorias_lista = [(i.nombre_interno,i.nombre_impreso) for i in categorias]
-#     return categorias_lista
+def add_imagen(imagen,nombre_cocktail,mantener_original):
+    nombre_imagen = secure_filename(imagen.filename)
+    original, extension = os.path.splitext(nombre_imagen)
+    if mantener_original:
+        directorio = f"{nombre_imagen}"
+    else:
+        directorio = f"cocktail_{nombre_cocktail}{extension}"
+    nombre_imagen = directorio
+    imagen.save(os.path.join(app.config['FOLDER_IMG'], nombre_imagen))
+    return directorio
 
 # rutas
 @app.route('/recetas',methods=['GET'])
@@ -161,19 +94,6 @@ def get_recetas():
     result = recetas_schema.dump(all_Recetas)
     # result = jsonify(result)
     print(result)
-    for receta in result:
-        receta['imagen'] = f"/app/{app.config['FOLDER_IMG']}{get_image(receta['imagen']).get_directorio()}"
-        print(receta['imagen'])
-        # for atributo in receta:
-        #     print(atributo)
-            # atributo.imagen = get_image(atributo.imagen).get_directorio()
-    return jsonify(result)
-
-@app.route('/imagenes',methods=['GET'])
-def get_imagenes():
-    update_imagenes()
-    all_imagenes = Imagen.query.all()
-    result = Imagenes_schema.dump(all_imagenes)
     return jsonify(result)
 
 @app.route('/ingredientes/<id>',methods=['GET'])
@@ -209,55 +129,42 @@ def create_receta():
     new_receta=Receta(nombre,1,instrucciones,ingredientes,tiene_alcohol)
     db.session.add(new_receta)
     db.session.commit()
-    new_imagen=Imagen(imagen,new_receta.id,False)
-    db.session.add(new_imagen)
-    db.session.commit()
-    new_receta.imagen = new_imagen.id
+    new_imagen=add_imagen(imagen,new_receta.id,False)
+    new_receta.imagen = new_imagen
     db.session.commit()
     return receta_schema.jsonify(new_receta)
 
 @app.route('/recetas/<id>' ,methods=['PUT'])
 def update_receta(id):
+    print("Intentando editar receta.")
     receta=Receta.query.get(id)
     nombre=request.form['nombre']
     instrucciones=request.form['instrucciones']
     ingredientes=request.form['ingredientes']
     tiene_alcohol=request.form['alcohol']
     imagen=request.files['imagen']
-    new_imagen = Imagen.query.get(receta.imagen)
-    old_imagen = Imagen.query.get(receta.imagen)
+    old_imagen = receta.imagen
+    new_imagen = old_imagen
     try:
-        # old_imagen = Imagen.query.get(receta.imagen)
-        # delete_image_file(old_imagen.directorio)
-        old_imagen_nombre = old_imagen.directorio
-        old_name, extension = os.path.splitext(old_imagen_nombre)
-        os.rename(f"/app/Static/img/{old_imagen.directorio}",f"/app/Static/img/{old_name}_(old){extension}")
-        old_imagen.directorio = f"{old_name}_(old){extension}"
+        print("Intentando borrar imagen vieja.")
+        delete_image_file(f"/app/Static/img/{old_imagen}")
         try:
-            # delete_image(old_imagen.id)
-            new_imagen=Imagen(imagen,id,False)
+            print("Intentando agregar nueva imagen.")
+            new_imagen=add_imagen(imagen,id,False)
         except Exception as error:
-            print(f"Error. Imagen no pudo ser creada.{error}")
-            return "Error. Imagen no pudo ser creada."
-        _nombre, extension = os.path.splitext(secure_filename(imagen.filename))
-        new_imagen.directorio = f"cocktail_{receta.id}{extension}"
-        # delete_image_file("cocktail_temp")
+            print(f"Error. Imagen no pudo ser creada.\n{error}")
+            return f"Error. Imagen no pudo ser creada.\n{error}"
         
     except Exception as error:
         print(f"Error. Imagen no válida.{error}")
     
-    receta.imagen=new_imagen.get_id()
-    db.session.add(new_imagen)
-    db.session.commit()
+    print("Aún intentando editar la receta.")
+    receta.imagen=new_imagen
     receta.nombre=nombre
     receta.instrucciones=instrucciones
     receta.ingredientes=ingredientes
     receta.tiene_alcohol=tiene_alcohol
-    
-    
-    
-
-    
+    db.session.commit()
     return receta_schema.jsonify(receta)
  
 
