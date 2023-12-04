@@ -5,7 +5,7 @@ const inputInstrucciones = document.getElementById("inputInstruccionesRecetaPut"
 const inputAlcohol = document.getElementById("inputAlcoholRecetaPut");
 const inputIDReceta = document.getElementById("inputIDRecetaAEditar");
 
-document.getElementById("putRecetaModal").addEventListener('show.bs.modal', evt => {
+document.getElementById("editRecetaModal").addEventListener('show.bs.modal', evt => {
     const recetaId = evt.relatedTarget.getAttribute('data-bs-receta-id');
     inputIDReceta.value = recetaId;
 });
