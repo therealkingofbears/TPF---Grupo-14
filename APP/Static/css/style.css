@@ -133,6 +133,17 @@ table.table .avatar {
 	font-size: 13px;
 }
 
+
+img {
+    width: 15vw;
+}
+
+.logo-img {
+    height: 10vw !important;
+    width: auto !important;
+}
+
+
 /* Modal styles */
 /*
 .modal .modal-dialog {
