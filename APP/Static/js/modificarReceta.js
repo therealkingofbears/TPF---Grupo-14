@@ -25,7 +25,7 @@ const modificarReceta = async (evt) => {
             inputIngredientes.value = "";
             inputInstrucciones.value = "";
             inputAlcohol.value = "";
-            ocultarModal('putRecetaModal');
+            ocultarModal('editRecetaModal');
             obtenerTodasLasRecetas();
         }
         else {
