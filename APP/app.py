@@ -26,8 +26,7 @@ class Receta(db.Model):
     __tablename__ = "Receta"   
     id = db.Column(db.Integer, primary_key=True)   
     # imagen = db.Column(ForeignKey())
-    imagen = db.Column(db.Integer, ForeignKey("Imagenes.id", ondelete="CASCADE"),
-                          nullable=False) 
+    imagen = db.Column(db.Integer, nullable=False) 
     nombre = db.Column(db.String(100), nullable=False)
     ingredientes = db.Column(db.String(1000), nullable=False)
     instrucciones = db.Column(db.String(1000), nullable=False)
@@ -59,12 +58,6 @@ class Imagen(db.Model):
             self.directorio = f"cocktail_{nombre_cocktail}{extension}"
         nombre_imagen = self.directorio
         imagen.save(os.path.join(app.config['FOLDER_IMG'], nombre_imagen))
-    # def __init__(self,imagen):
-    #     nombre_imagen = secure_filename(imagen.filename)
-    #     imagen.save(os.path.join(app.config['FOLDER_IMG'], nombre_imagen))
-    #     # original, extension = os.path.splitext(nombre_imagen)
-    #     self.directorio = nombre_imagen
-    #     return self.id
     def get_directorio(self):
         return self.directorio
     def get_id(self):
@@ -129,6 +122,13 @@ def delete_image(id):
         db.session.delete(imagen)
         db.session.commit()
 
+def delete_image_file(nombre):
+    for archivo in os.scandir("./Static/img"):
+        if archivo.name == nombre:
+            os.remove(archivo)
+            return True
+    return False
+            
 def get_image(id):
     return Imagen.query.filter_by(id=id).one()
 
@@ -219,23 +219,45 @@ def create_receta():
 @app.route('/recetas/<id>' ,methods=['PUT'])
 def update_receta(id):
     receta=Receta.query.get(id)
- 
     nombre=request.form['nombre']
     instrucciones=request.form['instrucciones']
     ingredientes=request.form['ingredientes']
     tiene_alcohol=request.form['alcohol']
-    imagen=request.file['imagen']
-    new_imagen=Imagen(imagen,nombre,False)
-    delete_image(receta.imagen)
+    imagen=request.files['imagen']
+    new_imagen = Imagen.query.get(receta.imagen)
+    old_imagen = Imagen.query.get(receta.imagen)
+    try:
+        # old_imagen = Imagen.query.get(receta.imagen)
+        # delete_image_file(old_imagen.directorio)
+        old_imagen_nombre = old_imagen.directorio
+        old_name, extension = os.path.splitext(old_imagen_nombre)
+        os.rename(f"/app/Static/img/{old_imagen.directorio}",f"/app/Static/img/{old_name}_(old){extension}")
+        old_imagen.directorio = f"{old_name}_(old){extension}"
+        try:
+            # delete_image(old_imagen.id)
+            new_imagen=Imagen(imagen,id,False)
+        except Exception as error:
+            print(f"Error. Imagen no pudo ser creada.{error}")
+            return "Error. Imagen no pudo ser creada."
+        _nombre, extension = os.path.splitext(secure_filename(imagen.filename))
+        new_imagen.directorio = f"cocktail_{receta.id}{extension}"
+        # delete_image_file("cocktail_temp")
+        
+    except Exception as error:
+        print(f"Error. Imagen no válida.{error}")
+    
+    receta.imagen=new_imagen.get_id()
+    db.session.add(new_imagen)
+    db.session.commit()
     receta.nombre=nombre
     receta.instrucciones=instrucciones
     receta.ingredientes=ingredientes
     receta.tiene_alcohol=tiene_alcohol
     
-    receta.imagen=new_imagen.get_id()
+    
+    
 
-    db.session.add(new_imagen)
-    db.session.commit()
+    
     return receta_schema.jsonify(receta)
  
 
