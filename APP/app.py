@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template, g, abort, session, url_for
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from flask_marshmallow import Marshmallow
@@ -6,6 +6,9 @@ from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy.orm import relationship
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import *
+from jinja2 import *
 import os
 app = Flask(__name__)  
  
@@ -18,6 +21,9 @@ app.config[ 'SQLALCHEMY_TRACK_MODIFICATIONS' ] = False #none
 db = SQLAlchemy(app)   
 ma = Marshmallow(app)
 app.config['FOLDER_IMG'] = "Static/img/"
+app.config['SECRET_KEY'] = 'laspatatassonhechasconquesodepapas'
+login_manager = LoginManager()
+login_manager.init_app(app)
 CORS(app)
 
 
@@ -38,12 +44,30 @@ class Receta(db.Model):
         self.ingredientes = ingredientes
         self.tiene_alcohol = tiene_alcohol
     def get_ingredientes(self):
-        return jsonify(self.ingredientes.split("*"))
+        return self.ingredientes.split("*")
     def get_instrucciones(self):
-        return jsonify(self.instrucciones.split("*"))
+        return self.instrucciones.split("*")
     def get_imagen(self):
-        return self.imagen
+        return f"/img/{self.imagen}"
+    def get_itself(self):
+        return jsonify(receta_schema.dump(self))
 
+class Usuario(UserMixin, db.Model):
+    __tablename__ = "Usuarios"
+    id = db.Column(db.Integer, primary_key=True)
+    nombre_usuario = db.Column(db.String(60), unique=True)
+    codigo = db.Column(db.String(128), nullable=False) 
+    email = db.Column(db.String(150), unique=True)
+    rol = db.Column(db.Integer, nullable=False)
+
+    @property
+    def password(self):
+        return AttributeError("La contraseña no es visible")
+    @password.setter
+    def password(self, password):
+        self.codigo = generate_password_hash(password)
+    def checkPassword(self, password):
+        return check_password_hash(self.codigo, password) #es asi?
         
 
 
@@ -51,6 +75,9 @@ class Receta(db.Model):
 with app.app_context():
     db.create_all()  
 
+@login_manager.user_loader
+def load_user(user_id):
+    return Usuario.query.get(int(user_id))
 # honestamente no tengo idea que es esto pero ayuda a jsonify-ar las bases de datos.
 # creo que usa marshmallow
 
@@ -88,6 +115,20 @@ def add_imagen(imagen,nombre_cocktail,mantener_original):
     return directorio
 
 # rutas
+@app.route('/')
+def index():
+    recetas = Receta.query.all()
+    ultimas = []
+    i = 1
+    for receta in recetas:
+        if i <= 4:
+            ultimas.append(receta)
+            # print(receta.get_itself())
+            print(receta.nombre)
+        i += 1
+    return render_template('index.html', ultimas=ultimas)
+
+
 @app.route('/recetas',methods=['GET'])
 def get_recetas():
     all_Recetas = Receta.query.all()

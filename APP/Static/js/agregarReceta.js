@@ -34,7 +34,7 @@ const agregarReceta = async (evt) => {
                 inputInstrucciones.value = "";
                 inputAlcohol.value = "";
                 ocultarModal('addRecetaModal');
-                obtenerTodasLasRecetas();
+                await obtenerTodasLasRecetas();
             }
             else {
                 throw new Error(`Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}`);
@@ -47,6 +47,6 @@ const agregarReceta = async (evt) => {
     } catch (err) {
         console.error(err);
     }
-    obtenerTodasLasRecetas();
+    // obtenerTodasLasRecetas();
 }
 
