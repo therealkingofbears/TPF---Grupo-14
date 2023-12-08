@@ -12,7 +12,7 @@ const borrarReceta = async (evt) => {
         const opcionesFetch = {
             method: 'DELETE'
         }
-        const resp = await fetch(`${URL}/recetas/${id}`, opcionesFetch);
+        const resp = await fetch(`${URL}/api/recetas/${id}`, opcionesFetch);
         if (resp.ok) {
             alert("Receta borrada exitosamente");
             ocultarModal('deleteRecetaModal');

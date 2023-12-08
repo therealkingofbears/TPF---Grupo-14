@@ -19,7 +19,7 @@ const agregarReceta = async (evt) => {
             method: 'POST',
             body: formData
         }
-        const resp = await fetch(`${URL}/recetas`, opcionesFetch);
+        const resp = await fetch(`${URL}/api/recetas`, opcionesFetch);
         const contentType = resp.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
             // La respuesta es en formato JSON
@@ -34,7 +34,7 @@ const agregarReceta = async (evt) => {
                 inputInstrucciones.value = "";
                 inputAlcohol.value = "";
                 ocultarModal('addRecetaModal');
-                obtenerTodasLasRecetas();
+                await obtenerTodasLasRecetas();
             }
             else {
                 throw new Error(`Error al agregar la receta. Respuesta del servidor: ${JSON.stringify(jsonResponse)}`);
@@ -47,6 +47,6 @@ const agregarReceta = async (evt) => {
     } catch (err) {
         console.error(err);
     }
-    obtenerTodasLasRecetas();
+    // obtenerTodasLasRecetas();
 }
 

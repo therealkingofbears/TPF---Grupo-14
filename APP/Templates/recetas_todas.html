@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="es">
+
+
+{% block head %}
+{{ super() }} <!--# super()  hereda todo lo que está dentro de el bloque tal
+            # y como está en la base-->
+{% block title %} <!--Acá estamos reemplasando el blocke de título por uno distinto-->
+<title>
+Lista de Recetas
+</title>
+{% endblock %}
+
+{% endblock %}
+
+<body>
+    <div class="recetas-todas-grid">
+        {% block navbar %}
+
+        {{ super() }}
+
+        {% endblock %}
+        {% for receta in recetas %}
+        {% block content %}
+        {% if receta.alochol == 'Si' %}
+        <div class="alcohol">
+        {% else %}
+        <div class="clasicos">
+        {% endif %}
+            <div class="container text-center">
+                <div class="row row-cols-2">
+                    <div class="recetas">
+                        <p class="nombre">{{ receta.nombre }}</p>
+                        <img class="receta-img" src="{{ url_for( 'static', filename=receta.get_imagen()) }}"
+                            alt="imagen de {{receta.nombre}}">
+                        <div class="detalles texto-negro">
+                            <p>Ingredientes:</p>
+                            <ul>
+                                {% for ingrediente in receta.get_ingredientes() %}
+                                <li>{{ingrediente}}</li>
+                                {% endfor %}
+                            </ul>
+                            <p>Modo de preparación:</p>
+                            <ol>
+                                {% for paso in receta.get_instrucciones() %}
+                                <li>{{paso}}</li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+            {% endblock %}
+            {% block footer %}
+
+            {{ super() }}
+
+            {% endblock %}
+
+    </div>
+
+
+
+</body>
+
+</html>

@@ -26,7 +26,7 @@ const modificarReceta = async (evt) => {
             body: formData
         }
         console.log("Intentando modificar");
-        const resp = await fetch(`${URL}/recetas/${id}`, opcionesFetch);
+        const resp = await fetch(`${URL}/api/recetas/${id}`, opcionesFetch);
         console.log("Aún intentando modificar");
         if (resp.ok) {
             alert("Receta modificada exitosamente");

@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="es">
+
+
+{% block head %}
+{% block title %} <!--Acá estamos reemplasando el blocke de título por uno distinto-->
+<title>
+    Bienvenidos a Brindis
+</title>
+{% endblock %}
+{{ super() }} <!--# super()  hereda todo lo que está dentro de el bloque tal
+            # y como está en la base-->
+
+{% endblock %}
+
+<body>
+    {% block grid %}
+    <div class="index-grid">
+    {% endblock %}
+        {% block navbar %}
+
+        {{ super() }}
+
+        {% endblock %}
+        {% block content %}
+
+        <section class="presentacion">
+            <p>
+            <h1>Bienvenidos a Brindis!</h1>
+            </p>
+            <br>
+            <p>
+                En Brindis, te invitamos a explorar el apasionante mundo de la mixología y los
+                cócteles. Somos más que un sitio web, somos tu guía personal hacia la creación
+                y disfrute de las bebidas más exquisitas y refrescantes.
+
+                Ya sea que estés buscando impresionar a tus amigos en una fiesta,
+                relajarte después de un largo día, o simplemente disfrutar de la magia
+                de una bebida bien elaborada, aquí encontrarás todo lo que necesitas.
+            </p>
+            <br>
+            <h2>Lo que te ofrecemos:</h2>
+            <br>
+            <ol>
+                <li>
+                    <h3>Recetas Inspiradoras: </h3>Descubre una amplia gama de recetas de
+                    cócteles que van desde los clásicos atemporales hasta creaciones innovadoras.
+                    Cada receta viene con instrucciones detalladas y consejos para asegurarte de
+                    que tus cócteles sean perfectos.
+                </li>
+                <li>
+                    <h3>Técnicas de Bartender: </h3>Aprende las técnicas esenciales de la
+                    mixología, desde el arte de agitar y revolver hasta la elección adecuada
+                    de cristalería y decoraciones.
+                </li>
+                <li>
+                    <h3>Ingredientes de calidad: </h3>Explora las marcas y tipos de licores,
+                    jarabes, frutas y otros ingredientes que hacen que los cócteles sean
+                    auténticos y deliciosos.
+                </li>
+                <li>
+                    <h3>Tips y Trucos: </h3>Descubre secretos de bartenders profesionales
+                    para mejorar tus habilidades y sorprender a tus invitados con tus creaciones.
+                </li>
+            </ol>
+            <br>
+            <p>
+                En Brindis creemos que cada cóctel es una obra maestra esperando ser descubierta,
+                y estamos aquí para ayudarte a desbloquear todo su potencial.
+                Únete a nosotros en este viaje de sabores, creatividad y diversión.
+                <br>
+                <br>
+                ¡Salud! Brindemos juntos por la alegría de la coctelería.
+            </p>
+        </section>
+        <div class="sidebar">
+            <h3>Recetas más Recientes</h3>
+            {% for receta in ultimas %} <!--Esto es un bloque for. Itera sobre una lista/diccionario y funciona
+                                        de la misma manera que los for en python. -->
+            <div class="recetas">
+                <p class="nombre">{{ receta.nombre }}</p>
+                <img class="receta-img" src="{{ url_for( 'static', filename=receta.get_imagen()) }}"
+                    alt="imagen de {{receta.nombre}}">
+                <a class="special-link" href="{{ url_for('detalles_receta',id=receta.id) }}">Aprender Más</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endblock %}
+        {% block footer %}
+
+        {{ super() }}
+
+        {% endblock %}
+    {% block grid_end %}
+    </div>
+    {% endblock %}
+
+
+
+</body>
+
+</html>
