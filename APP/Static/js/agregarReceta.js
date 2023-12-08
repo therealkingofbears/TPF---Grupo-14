@@ -19,7 +19,7 @@ const agregarReceta = async (evt) => {
             method: 'POST',
             body: formData
         }
-        const resp = await fetch(`${URL}/recetas`, opcionesFetch);
+        const resp = await fetch(`${URL}/api/recetas`, opcionesFetch);
         const contentType = resp.headers.get("content-type");
         if (contentType && contentType.includes("application/json")) {
             // La respuesta es en formato JSON

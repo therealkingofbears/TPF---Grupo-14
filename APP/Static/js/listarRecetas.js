@@ -1,6 +1,6 @@
 const obtenerTodasLasRecetas = async (evt) => {
     try {
-        const resp = await fetch(`${URL}/recetas`);
+        const resp = await fetch(`${URL}/api/recetas`);
         if (resp.ok) {
             const data = await resp.json();
             console.log(data)

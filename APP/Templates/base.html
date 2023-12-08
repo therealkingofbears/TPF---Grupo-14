@@ -13,10 +13,12 @@
                                                                                     'static' nos deja poner un archivo en lugar de una página. Por eso,
                                                                                     los archivos que no cambian dinámicamente están en la carpeta Static.-->
     <link rel="shortcut icon" href="{{ url_for('static', filename='/img/favicon.ico') }}" type="image/x-icon" />
-    <title>{%block titulo%}Un Brindis por tu Llegada{% endblock %}</title> 
+    {%block titulo%}{% endblock %} 
 </head>
 {% endblock %}
 <body>
+    {% block grid %}
+    {% endblock %}
     {% block navbar %}
         <div class="logo">
             <a href="{{ url_for('index') }}"><img class="logo-img" src="{{ url_for('static', filename='/img/logo.png') }}" alt="logo"></a> <!--Cuando queremos que url_for busque una página,
@@ -36,7 +38,7 @@
                     </a>
                 </div>
                 <div class="recetas">
-                    <a href="url_for('recetas')" class="link">
+                    <a href="url_for('show_all_recetas')" class="link">
                         Recetas
                     </a>
                 </div>
@@ -47,12 +49,6 @@
                 </div>
             <!-- </div> -->
         </div>
-
-       <!-- /* Necesito una imagen en la parte superior*/ -->
-
-       <!-- <div class="imagen-centrada">
-            <img src="{{ url_for('static', filename='/img/pexels-photo-2093089.jpeg') }}" alt="Coctel" class="imagen-pequena">
-       </div> -->
     {% endblock %}
     {% block content %}
       
@@ -64,6 +60,8 @@
         <p>Diego Ezequiel Feldman</p>
         <p>Alejandro Curátolo</p>
     </footer>
+    {% endblock %}
+    {% block grid_end %}
     {% endblock %}
 </body>
 </html>

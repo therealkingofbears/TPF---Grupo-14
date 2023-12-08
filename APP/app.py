@@ -114,7 +114,8 @@ def add_imagen(imagen,nombre_cocktail,mantener_original):
     imagen.save(os.path.join(app.config['FOLDER_IMG'], nombre_imagen))
     return directorio
 
-# rutas
+# rutas de la página
+
 @app.route('/')
 def index():
     recetas = Receta.query.all()
@@ -128,8 +129,19 @@ def index():
         i += 1
     return render_template('index.html', ultimas=ultimas)
 
+@app.route('/recetas/<id>')
+def detalles_receta(id):
+    return render_template('receta.html', receta=get_receta(id))
 
-@app.route('/recetas',methods=['GET'])
+@app.route('/recetas')
+def show_all_recetas():
+    return render_template('receta.html', recetas=get_recetas())
+
+
+
+# rutas del API 
+
+@app.route('/api/recetas',methods=['GET'])
 def get_recetas():
     all_Recetas = Receta.query.all()
     result = recetas_schema.dump(all_Recetas)
@@ -137,29 +149,29 @@ def get_recetas():
     print(result)
     return jsonify(result)
 
-@app.route('/ingredientes/<id>',methods=['GET'])
+@app.route('/api/ingredientes/<id>',methods=['GET'])
 def display_ingredientes(id):
     receta = Receta.query.filter_by(id=id).one()
     return receta.get_ingredientes()
 
-@app.route('/recetas/<id>',methods=['GET'])
+@app.route('/api/recetas/<id>',methods=['GET'])
 def get_receta(id):
     receta=Receta.query.get(id)
-    return receta_schema.jsonify(receta)
+    return receta
 
-@app.route('/recetas/<id>/instrucciones',methods=['GET'])
+@app.route('/api/recetas/<id>/instrucciones',methods=['GET'])
 def get_instrucciones(id):
     receta=Receta.query.get(id)
     return receta.get_instrucciones()
 
-@app.route('/recetas/<id>',methods=['DELETE'])
+@app.route('/api/recetas/<id>',methods=['DELETE'])
 def delete_receta(id):
     receta=Receta.query.get(id)
     db.session.delete(receta)
     db.session.commit()
     return receta_schema.jsonify(receta)
 
-@app.route('/recetas', methods=['POST'])
+@app.route('/api/recetas', methods=['POST'])
 def create_receta():
     # print(request.json)  # request.json contiene el json que envio el cliente
     nombre=request.form['nombre']
@@ -175,7 +187,7 @@ def create_receta():
     db.session.commit()
     return receta_schema.jsonify(new_receta)
 
-@app.route('/recetas/<id>' ,methods=['PUT'])
+@app.route('/api/recetas/<id>' ,methods=['PUT'])
 def update_receta(id):
     print("Intentando editar receta.")
     receta=Receta.query.get(id)

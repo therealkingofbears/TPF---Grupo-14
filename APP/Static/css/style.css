@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Montserrat:wght@200&family=Poppins&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Caprasimo&family=Montserrat:wght@200&family=Poppins&display=swap');
 
+/* nombres para las grid-areas */
 .logo { grid-area: logo; background-color: #8e8ea5;}
 .navbar { grid-area: navbar;  background-color: #c0c0db;}
 .alcohol { grid-area: alcohol;color: #c0c0db !important;}
@@ -27,6 +28,8 @@ footer { grid-area: footer;}
     color:  #050524;
 }
 
+/* grids */
+
 .recetas {
     display: grid;
     grid-template-areas:
@@ -39,42 +42,51 @@ footer { grid-area: footer;}
     gap: 1vw;
 }
 
-/* @media only screen and (max-width: 300px)
+.index-grid {
+    display: grid;
+    grid-template-areas:
+    'logo logo'
+    'navbar navbar'
+    'presentacion sidebar'
+    'footer sidebar'
+    ;
+    gap: 1vw;
+}
+
+@media only screen and (max-width: 300px)
 {
-    .grid-container {
+    .recetas-todas-grid {
         display: grid;
         grid-template-areas:
         'logo logo logo logo'
-        'navbar navbar navbar navbar'
         'navbar navbar navbar navbar'
         'sidebar sidebar sidebar sidebar'
         'alcohol alcohol alcohol alcohol'
         'clasicos clasicos clasicos clasicos'
         'footer footer footer footer'
         ;
-        background-color: cadetblue; 
         gap: 1vw;
     }
 }
 
 @media only screen and (min-width: 728px)
 {
-    .grid-container {
+    .recetas-todas-grid {
         display: grid;
         grid-template-areas:
         'logo logo logo logo'
         'navbar navbar navbar navbar'
         'alcohol alcohol alcohol sidebar'
         'clasicos clasicos clasicos sidebar'
-        'footer footer footer sidebar'
+        'footer footer footer footer'
         ;
         gap: 1vw;
     }
-} */
+} 
 
-/* @media only screen and (max-width: 727px) */
-/* { */
-    .grid-container {
+@media only screen and (max-width: 727px)
+{
+    .recetas-todas-grid {
         display: grid;
         grid-template-areas:
         'logo logo logo logo'
@@ -83,134 +95,41 @@ footer { grid-area: footer;}
         'clasicos clasicos clasicos clasicos'
         'footer footer footer footer'
         ;
-        /* background-color: cadetblue; */
         gap: 1vw;
     }
-/* } */
-
-
-
-.grid-container > div {
-    /* background-color: aquamarine; */
-    padding: 40px;
-}
-.grid-container > nav {
-    /* background-color: aquamarine; */
-    height: 1vw;
-}
-/* @media only screen and (min-width: 728px) */
-/* { */
-    .clasicas {
-        display:grid;
-        grid-template-areas: 
-        /* 'texto texto' */
-        'receta4 receta3'
-        'receta2 receta1'
-        ;
-        /* background-color: cadetblue; */
-        gap: 1vw;
-		width: 30vw;
-		/* height: 30vw; */
-    }
-/* } */
-
-/* @media only screen and (max-width: 727px)
-{
-    .alcohol {
-        display:grid;
-        grid-template-areas: 
-        'texto'
-        'receta1'
-        'receta2'
-        'receta3'
-        'receta4'
-        ;
-        /* background-color: cadetblue; */
-        /* gap: 1vw; */
-    /* } */
-/* } */ 
-.alcohol > div {
-    /* background-color: cadetblue; */
-    padding: 40px;
 }
 
-/* @media only screen and (min-width: 728px)
-{
-    .clasicas {
-        display:grid;
-        grid-template-areas: 
-        'texto texto'
-        'receta1 receta2'
-        'receta3 receta4'
-        ;
-        gap: 1vw;
-    }
-} */
-
-/* @media only screen and (max-width: 727px)
-{
-    .clasicas {
-        display:grid;
-        grid-template-areas: 
-        'texto'
-        'receta1'
-        'receta2'
-        'receta3'
-        'receta4'
-        ;
-        gap: 1vw;
-    }
-} */
-
-.clasicas > div {
-    /* background-color: cadetblue; */
-    padding: 40px;
-}
 @media only screen and (min-width: 351px)
 {
-.navbar {
-    display: grid;
-    grid-template-areas:
-    'home contacto conocer recetas';
-    /* background-color:blueviolet; */
-    place-items: center;
-    gap: 1vw;
+    .navbar {
+        display: grid;
+        grid-template-areas:
+        'home contacto conocer recetas';
+        place-items: center;
+        gap: 1vw;
+    }
+
+    .navbar > div {
+        height: 3vw;
+    }
 }
-.navbar > div {
-    /* background-color: rgb(247, 13, 227); */
-    /* padding: 40px; */
-    height: 3vw;
-}
-}
+
 @media only screen and (max-width: 350px)
 {
-.navbar {
-    display: grid;
-    grid-template-areas:
-    'home contacto'
-    'conocer recetas';
-    /* background-color:blueviolet; */
-    place-items: center;
-    gap: 1vw 2vw 1vw 2vw;
-}
-.navbar > div {
-    /* background-color: rgb(247, 13, 227); */
-    /* padding: 40px; */
-    height: 4vw;
-}
+    .navbar {
+        display: grid;
+        grid-template-areas:
+        'home contacto'
+        'conocer recetas';
+        place-items: center;
+        gap: 1vw 2vw 1vw 2vw;
+    }
+    .navbar > div {
+        height: 4vw;
+    }
 }
 
-
-img {
-    width: 15vw;
-}
-
-.logo-img {
-    height: 10vw !important;
-    width: auto !important;
-}
-
-.grid-cont {
+.grid-cont {   /* no se que es esto, pero lo dejo */
     display: grid;
     grid-template-areas:
     'logo logo logo logo'
@@ -224,10 +143,64 @@ img {
 }
 
 .grid-cont > div, nav {
-    /*background-color: #c0c0db;*/
     padding: 40px;
 }
 
+/* elementos de grid-areas */
+
+.grid-container > div {
+    padding: 40px;
+}
+.grid-container > nav {
+    height: 1vw;
+}
+
+.alcohol > div {
+    padding: 40px;
+}
+
+.clasicas > div {
+    padding: 40px;
+}
+
+/* links */
+
+.special-link:hover,.special-link:active{
+    background-color: #050524;
+    color: #c0c0db;
+    padding: 14px 25px;
+    text-align: center;
+    display: inline-block;
+}
+
+.special-link:link {
+    background-color: #050524;
+    color: #c0c0db;
+    padding: 14px 25px;
+    text-align: center;
+    display: inline-block;
+}
+
+.special-link:visited {
+    background-color: #050524;
+    color: #c0c0db;
+    padding: 14px 25px;
+    text-align: center;
+    display: inline-block;
+}
+
+/* misceláneo */
+
+img {
+    width: 15vw;
+}
+
+.logo-img {
+    height: 10vw !important;
+    width: auto !important;
+}
+
+/* cosas que copiamos al profe y hay que cambiar */
 
 .table-responsive {
     margin: 30px 0;
@@ -362,6 +335,7 @@ body {
 	color: #c0c0db;
 	background: #8e8ea5;
 	font-family: 'Varela Round', sans-serif;
+    padding: 2vw;
 }
 
 .logo {

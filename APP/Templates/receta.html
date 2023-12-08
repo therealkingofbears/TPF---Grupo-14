@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="es">
+
+
+{% block head %}
+{{ super() }} <!--# super()  hereda todo lo que está dentro de el bloque tal
+            # y como está en la base-->
+{% block title %} <!--Acá estamos reemplasando el blocke de título por uno distinto-->
+<title>
+{{receta.nombre}}
+</title>
+{% endblock %}
+
+{% endblock %}
+
+<body>
+    <div class="receta-grid">
+        {% block navbar %}
+
+        {{ super() }}
+
+        {% endblock %}
+        {% block content %}
+        <div class="recetas">
+            <p class="nombre">{{ receta.nombre }}</p>
+            <img class="receta-img" src="{{ url_for( 'static', filename=receta.get_imagen()) }}"
+                alt="imagen de {{receta.nombre}}">
+            <div class="detalles texto-negro">
+                <p>Ingredientes:</p>
+                <ul>
+                    {% for ingrediente in receta.get_ingredientes() %}
+                    <li>{{ingrediente}}</li>
+                    {% endfor %}
+                </ul>
+                <p>Modo de preparación:</p>
+                <ol>
+                    {% for paso in receta.get_instrucciones() %}
+                    <li>{{paso}}</li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+        {% endblock %}
+        {% block footer %}
+
+        {{ super() }}
+
+        {% endblock %}
+
+    </div>
+
+
+
+</body>
+
+</html>
