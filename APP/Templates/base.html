@@ -27,23 +27,23 @@
         </div>
         <div class="navbar">
             <!-- <div class="navbar-menu"> -->
-                <div class="homehome">
+                <div class="homehome navbar-link">
                     <a href="{{ url_for('index') }}" class="link">
                         Home
                     </a>
                 </div>
-                <div class="conocer">
-                    <a href="url_for('historia')" class="link">
+                <div class="conocer navbar-link">
+                    <a href="{{ url_for('index') }}" class="link">
                         Historia
                     </a>
                 </div>
-                <div class="recetas">
-                    <a href="url_for('show_all_recetas')" class="link">
+                <div class="recetas-navbar navbar-link">
+                    <a href="{{ url_for('show_all_recetas') }}" class="link">
                         Recetas
                     </a>
                 </div>
-                <div class="contacto">
-                    <a href="url_for('contacto')" class="link">
+                <div class="contacto navbar-link">
+                    <a href="{{ url_for('index') }}" class="link">
                         Contacto
                     </a>
                 </div>
@@ -55,10 +55,10 @@
     {% endblock %}
     {% block footer %}
     <footer>
-        <p>Comisión 23519 - Codo A Codo</p>
-        <p>Diego Román Espínola</p>
-        <p>Diego Ezequiel Feldman</p>
-        <p>Alejandro Curátolo</p>
+        <div class="comision"><p>Comisión 23519 - Codo A Codo</p></div>
+        <div class="cr1"><p>* Diego Román Espínola</p></div>
+        <div class="cr2"><p>* Diego Ezequiel Feldman</p></div>
+        <div class="cr3"><p>* Alejandro Curátolo</p></div>
     </footer>
     {% endblock %}
     {% block grid_end %}

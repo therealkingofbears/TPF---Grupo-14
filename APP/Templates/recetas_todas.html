@@ -21,8 +21,8 @@ Lista de Recetas
         {{ super() }}
 
         {% endblock %}
-        {% for receta in recetas %}
         {% block content %}
+        {% for receta in recetas %}
         {% if receta.alochol == 'Si' %}
         <div class="alcohol">
         {% else %}

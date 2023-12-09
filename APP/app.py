@@ -135,7 +135,7 @@ def detalles_receta(id):
 
 @app.route('/recetas')
 def show_all_recetas():
-    return render_template('receta.html', recetas=get_recetas())
+    return render_template('recetas_todas.html', recetas=get_recetas())
 
 
 
@@ -145,9 +145,7 @@ def show_all_recetas():
 def get_recetas():
     all_Recetas = Receta.query.all()
     result = recetas_schema.dump(all_Recetas)
-    # result = jsonify(result)
-    print(result)
-    return jsonify(result)
+    return all_Recetas
 
 @app.route('/api/ingredientes/<id>',methods=['GET'])
 def display_ingredientes(id):
