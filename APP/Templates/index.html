@@ -78,7 +78,7 @@
             <h3>Recetas más Recientes</h3>
             {% for receta in ultimas %} <!--Esto es un bloque for. Itera sobre una lista/diccionario y funciona
                                         de la misma manera que los for en python. -->
-            <div class="recetas">
+            <div class="recetas-index">
                 <p class="nombre">{{ receta.nombre }}</p>
                 <img class="receta-img" src="{{ url_for( 'static', filename=receta.get_imagen()) }}"
                     alt="imagen de {{receta.nombre}}">
